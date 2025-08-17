@@ -1,0 +1,98 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+class SavingsPlan {
+private:
+double R; // Periodic deposit amount
+double m; // Deposits per year
+double rate; // Annual interest rate (decimal)
+double years; // Number of years
+
+public:
+SavingsPlan(double deposit, double timesPerYear, double interestRate, double numYears) {
+R = deposit;
+m = timesPerYear;
+rate = interestRate;
+years = numYears;
+}
+
+SavingsPlan() {
+R = 0;
+m = 0;
+rate = 0;
+years = 0;
+}
+
+void setValues(double deposit, double timesPerYear, double interestRate, double numYears) {
+R = deposit;
+m = timesPerYear;
+rate = interestRate;
+years = numYears;
+}
+
+double totalAccumulated() {
+return R * ( (pow(1 + rate/m, m*years) - 1) / (rate/m) );
+}
+
+static double periodicPayment(double target, double timesPerYear, double interestRate, double numYears) {
+return ( target * (interestRate/timesPerYear) ) /
+( pow(1 + interestRate/timesPerYear, timesPerYear*numYears) - 1 );
+}
+};
+
+// Function to automatically determine interest rate based on target
+double autoInterestRate(double target) {
+if (target < 5000) return 0.02; // 2% for small savings
+else if (target < 20000) return 0.035; // 3.5%
+else if (target < 50000) return 0.045; // 4.5%
+else return 0.05; // 5% for large savings
+}
+
+int main() {
+int choice;
+cout << "===== SAVINGS & INTEREST CALCULATOR =====" << endl;
+cout << "1. Calculate total accumulated savings" << endl;
+cout << "2. Calculate required periodic deposit for a target amount" << endl;
+cout << "Enter choice (1 or 2): ";
+cin >> choice;
+
+if (choice == 1) {
+double deposit, m, years, target;
+cout << "\nEnter the amount you will deposit each period: $";
+cin >> deposit;
+cout << "Enter number of deposits per year (e.g., 12 for monthly, 4 for quarterly): ";
+cin >> m;
+cout << "Enter number of years you will save: ";
+cin >> years;
+
+
+double rate = autoInterestRate(target);
+cout << "Auto-calculated interest rate: " << rate*100 << "% per year" << endl;
+
+SavingsPlan plan(deposit, m, rate, years);
+cout << "\nAfter " << years << " years, you will have: $"
+<< plan.totalAccumulated() << endl;
+
+} else if (choice == 2) {
+double target, m, years;
+cout << "\nEnter the target amount you want to reach: $";
+cin >> target;
+cout << "Enter number of deposits per year (e.g., 12 for monthly, 4 for quarterly): ";
+cin >> m;
+cout << "Enter number of years to save: ";
+cin >> years;
+
+double rate = autoInterestRate(target);
+cout << "Auto-calculated interest rate: " << rate*100 << "% per year" << endl;
+
+double payment = SavingsPlan::periodicPayment(target, m, rate, years);
+cout << "\nYou need to deposit $" << payment << " every period to reach your goal." << endl;
+
+} else {
+cout << "Invalid choice. Please restart the program." << endl;
+}
+
+cout << "\n===== PROGRAM ENDED =====" << endl;
+return 0;
+}
