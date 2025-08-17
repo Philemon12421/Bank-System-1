@@ -1,0 +1,196 @@
+#include <iostream>
+#include <iomanip>
+#include <string>
+using namespace std;
+
+class BankAccount {
+private:
+string accountHolder;
+int accountNumber;
+string accountType;
+double balance;
+double interestRate;
+
+static int nextAccountNumber; // Auto-increment for account numbers
+
+public:
+// Default constructor
+BankAccount() : accountHolder(""), accountNumber(0), accountType(""), balance(0), interestRate(0) {}
+
+// Parameterized constructor
+BankAccount(string name, string type, double initialBalance, double rate = 0) {
+accountHolder = name;
+accountType = type;
+balance = initialBalance;
+
+// Set interest rate depending on account type
+if (accountType == "Savings" || accountType == "savings") {
+interestRate = rate;
+} else {
+interestRate = 0; // Checking accounts have no interest
+}
+
+accountNumber = ++nextAccountNumber; // Auto-assign account number
+}
+
+// Set account details
+void setAccountDetails(string name, string type, double initialBalance, double rate = 0) {
+accountHolder = name;
+accountType = type;
+balance = initialBalance;
+
+if (accountType == "Savings" || accountType == "savings") {
+interestRate = rate;
+} else {
+interestRate = 0;
+}
+
+accountNumber = ++nextAccountNumber;
+}
+
+// Deposit money
+void deposit(double amount) {
+if (amount > 0) {
+balance += amount;
+cout << "Deposit successful. New balance: $" << fixed << setprecision(2) << balance << endl;
+} else {
+cout << "Invalid deposit amount.\n";
+}
+}
+
+// Withdraw money
+void withdraw(double amount) {
+if (amount > 0 && amount <= balance) {
+balance -= amount;
+cout << "Withdrawal successful. New balance: $" << fixed << setprecision(2) << balance << endl;
+} else {
+cout << "Invalid withdrawal amount or insufficient funds.\n";
+}
+}
+
+// Apply interest for savings accounts
+void applyInterest() {
+if (interestRate > 0) {
+double interest = balance * interestRate;
+balance += interest;
+cout << "Interest applied: $" << interest << ". New balance: $" << fixed << setprecision(2) << balance << endl;
+} else {
+cout << "No interest applied (Checking account).\n";
+}
+}
+
+// Display account details
+void displayDetails() const {
+cout << "\nAccount Holder: " << accountHolder
+<< "\nAccount Number: " << accountNumber
+<< "\nAccount Type: " << accountType
+<< "\nBalance: $" << fixed << setprecision(2) << balance
+<< "\nInterest Rate: " << interestRate * 100 << "%\n";
+}
+};
+
+// Initialize static variable
+int BankAccount::nextAccountNumber = 1000;
+
+int main() {
+BankAccount customers[10];
+int count = 0;
+int choice;
+
+do {
+cout << "\n===== BANK ACCOUNT SYSTEM =====\n";
+cout << "1. Create Account\n";
+cout << "2. Deposit Money\n";
+cout << "3. Withdraw Money\n";
+cout << "4. Apply Interest\n";
+cout << "5. Display Account Details\n";
+cout << "6. Exit\n";
+cout << "Enter your choice: ";
+cin >> choice;
+
+if (choice == 1) {
+if (count < 10) {
+string name, type;
+double initialBalance, rate = 0;
+
+cout << "Enter account holder's name: ";
+cin.ignore();
+getline(cin, name);
+
+cout << "Enter account type (Checking/Savings): ";
+cin >> type;
+
+cout << "Enter initial balance: $";
+cin >> initialBalance;
+
+if (type == "Savings" || type == "savings") {
+cout << "Enter interest rate (e.g., 0.04 for 4%): ";
+cin >> rate;
+}
+
+customers[count].setAccountDetails(name, type, initialBalance, rate);
+count++;
+
+cout << "Account created successfully!\n";
+} else {
+cout << "Maximum number of accounts reached.\n";
+}
+
+} else if (choice == 2) {
+int index;
+double amount;
+cout << "Enter account index (0 to " << count - 1 << "): ";
+cin >> index;
+if (index >= 0 && index < count) {
+cout << "Enter deposit amount: $";
+cin >> amount;
+customers[index].deposit(amount);
+} else {
+cout << "Invalid account index.\n";
+}
+
+} else if (choice == 3) {
+int index;
+double amount;
+cout << "Enter account index (0 to " << count - 1 << "): ";
+cin >> index;
+if (index >= 0 && index < count) {
+cout << "Enter withdrawal amount: $";
+cin >> amount;
+customers[index].withdraw(amount);
+} else {
+cout << "Invalid account index.\n";
+}
+
+} else if (choice == 4) {
+int index;
+cout << "Enter account index (0 to " << count - 1 << "): ";
+cin >> index;
+if (index >= 0 && index < count) {
+customers[index].applyInterest();
+} else {
+cout << "Invalid account index.\n";
+}
+
+} else if (choice == 5) {
+int index;
+cout << "Enter account index (0 to " << count - 1 << "): ";
+cin >> index;
+if (index >= 0 && index < count) {
+customers[index].displayDetails();
+} else {
+cout << "Invalid account index.\n";
+}
+
+} else if (choice != 6) {
+cout << "Invalid choice. Try again.\n";
+}
+
+} while (choice != 6);
+
+cout << "Exiting program. 1Goodbye!\n";
+return 0;
+}
+//
+// Created by philemonkusi292 on 8/10/25.
+//
